@@ -1,0 +1,96 @@
+<div class="container-fluid">
+  <h2>Please input your information, then click search!</h2>
+  <form [formGroup]="userSearchForm" (ngSubmit)="onSearchUser()">
+    <div class="row">
+      <div class="col form-group">
+        <label for="platform">Platform</label>
+        <select formControlName="platform" class="form-group" style="width: 100%;">
+          <option *ngFor="let plat of platformOptions" [ngValue]="plat.value">{{ plat.name }}</option>
+        </select>
+      </div>
+      <div class="col form-group">
+        <label for="username">Username</label>
+        <input type="text" formControlName="username" class="form-control" />
+      </div>
+      <div class="col form-group">
+        <br/>
+        <button class="btn btn-block btn-primary">search!</button>
+      </div>
+    </div>
+  </form>
+
+  <div *ngIf="presentationOrganization">
+    <p>{{ presentationOrganization.displayProperties.name }}</p>
+    <div class="row no-gutters">
+      <div class="col-3 col-sm" *ngFor="let node of presentationOrganization.children.presentationNodes">
+        <img class="icon-spacing" style='width: 100%; max-width: 256px;' src='https://www.bungie.net{{node.rootViewIcon}}' />
+      </div>
+    </div>
+  </div>
+</div>
+
+  <!--
+  <div *ngFor="let triumph of triumphList" class="card">
+    <div class="card-header">
+        <strong>{{ triumph.title }}</strong>
+    </div>
+    <div class="card-body">
+      <img width=30 style='align-content: flex-start' src='{{ triumph.iconPath }}' />
+      <p class="card-text">{{ triumph.description }}</p>
+      <div *ngFor="let objective of triumph.objectives">
+        <p class="card-text">{{ objective.description }}</p>
+        <div class="progress">
+          <div class="progress-bar" [ngStyle]="{'width': objective.completePercent + '%'}">
+            {{ objective.currentProgres }} / {{ objective.completionValue }}
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+  -->
+
+<div class="container-fluid">
+
+  <div class="row">
+
+    <div class="col-4">
+      <div class="row" *ngIf="presentationOrganization">
+        <div class="col bg-dark sub-category"  *ngFor="let subCategory of presentationOrganization.children.presentationNodes[categorySelection].children.presentationNodes">
+          <img style="width: 55%;" src="https://www.bungie.net{{subCategory.rootViewIcon}}">
+        </div>
+      </div>
+    </div>
+
+    <div class="col-8">
+      <div class="row">
+        <div *ngFor="let triumph of triumphList" class="col-sm-12 col-md-6 col-lg-4" style="margin-top: 0.5rem; margin-bottom: 0.5rem;">
+          <div *ngIf="triumph" class="card bg-dark flex-row flex-wrap text-white">
+              <div class="triumphIcon">
+                  <img width=100% src='{{ triumph.iconPath }}'>
+              </div>
+              <div class="card-block px-2">
+                  <h4 class="card-title">{{ triumph.name }}</h4>
+                  <p class="card-text">{{ triumph.description }}</p>
+              </div>
+              <div class="w-100"></div>
+              <div class="card-footer w-100">
+                <div *ngFor="let objective of triumph.objectives">
+                  <p class="card-text">{{ objective.description }}</p>
+                  <div class="progress">
+                    <div class="progress-bar bg-secondary" [ngStyle]="{'width': objective.completionPercent + '%'}">
+                        <span class="justify-content-center d-flex position-absolute w-100" style="color: #000; font-weight: bold;">
+                            {{ objective.progress }} / {{ objective.completionValue }}
+                        </span>
+                    </div>
+                  </div>
+                </div>
+              </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+
+
+</div>
