@@ -1,7 +1,10 @@
 import { Triumph } from './Triumph';
 
 export class PresentationNode {
-  displayProperties: DisplayProperties;
+  description: string;
+  name: string;
+  icon: string;
+  hasIcon: boolean;
   rootViewIcon: string;
   scope: number;
   children: Children;
@@ -10,15 +13,7 @@ export class PresentationNode {
   hash: string;
 }
 
-
-export class DisplayProperties {
-  description: string;
-  name: string;
-  icon: string;
-  hasIcon: boolean;
-}
-
 export class Children {
-  presentationNodes: Array<PresentationNode>;
-  records: Array<Triumph>;
+  presentationNodes: Array<string>;
+  records: Array<string>;
 }

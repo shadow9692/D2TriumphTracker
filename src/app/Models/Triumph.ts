@@ -4,6 +4,7 @@ export class Triumph {
   iconPath: string;                   // `https://www.bungie.net${icon}
   scoreValue: number;                 // Triumph's score value
   state: stateMask;                   // Triumph state for visibility and completion
+  hash: string;                       // hash string of the current triumph
   objectives: Array<Objective> =
             new Array<Objective>();   // List of objectives for the Triumph
 

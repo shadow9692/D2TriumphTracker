@@ -7,7 +7,8 @@ import { D2ApiService } from '../services/d2-api.service';
 import { User, UserInfo } from '../Models/User';
 import { Triumph, Objective, stateMask } from '../Models/Triumph';
 import { UserTriumph, UserTriumphObjective } from '../Models/UserTriumph';
-import { PresentationNode, DisplayProperties, Children } from '../Models/presentationNode';
+import { PresentationNode, Children } from '../Models/presentationNode';
+import { TriumphTrackerService } from '../services/triumph-tracker.service';
 
 
 @Component({
@@ -19,16 +20,17 @@ export class CharacterHomeComponent implements OnInit {
 
   //#region Variable_Declarations
   private manifest: any;
-  private readonly rootTriumphPresentation: string = '1024788583';
-  private userSearchForm: FormGroup;
+  public readonly rootTriumphPresentationHash: string = '1024788583';
+  public userSearchForm: FormGroup;
 
   private triumph: Triumph;
-  private triumphList: Array<Triumph> = new Array<Triumph>();
-  private presentationOrganization: PresentationNode;
+  public FullTriumphList = {};
+  public triumphList = new Array<Triumph>();
+  public presentationNodeList;
 
-  private categorySelection = 0;
-  private subCategorySelection = 0;
-  private sectionSelection = 0;
+  public categorySelection: string;
+  public subCategorySelection: string;
+  public sectionSelection: string;
 
   platformOptions = [
     {name: 'XBL', value: 1},
@@ -39,7 +41,8 @@ export class CharacterHomeComponent implements OnInit {
 
   constructor(private d2Api: D2ApiService,
               private route: ActivatedRoute,
-              private formBuilder: FormBuilder) { }
+              private formBuilder: FormBuilder,
+              private tracker: TriumphTrackerService) { }
 
   ngOnInit() {
     let resolvedData: any = this.route.snapshot.data['resolvedManifest'];
@@ -72,7 +75,9 @@ export class CharacterHomeComponent implements OnInit {
           //console.log(this.manifest.DestinyObjectiveDefinition['3488693772']);
           console.log(userTriumphs);
           //this.testingState(userTriumphs);
-          this.triumphList = this.createPresentationOrganization(this.manifest.DestinyPresentationNodeDefinition, userTriumphs);
+          if(this.presentationNodeList) console.log("empty is true!");
+          this.presentationNodeList = this.createPresentationNodeList(this.manifest.DestinyPresentationNodeDefinition, userTriumphs);
+          console.log(this.presentationNodeList);
         },
         (err: any) => {
           console.error(err);
@@ -106,14 +111,20 @@ export class CharacterHomeComponent implements OnInit {
     console.log(stateMaskDict);
   }
 
-  // takes in profile ?components=900 response as input.
-  createPresentationOrganization(presentNodes, userTriumphs): Array<Triumph> {
-    let tList = new Array<Triumph>();
-    let rootNode: PresentationNode = this.mapPresentationNode(presentNodes[this.rootTriumphPresentation]);
+  /*
+   * Input: Manifest presentation Definition, user triumph list
+   * Output: presentation node dictionary
+   * this method modifies the triumph list and fills it with all triumphs
+   * updated correctly with all user data, and builds the presentation node
+   * dictionary stored as { hash: presentationNode }
+   */
+  createPresentationNodeList(presentNodes, userTriumphs) {
+    let presetNodeList = {};
+    let rootNode: PresentationNode = this.mapPresentationNode(presentNodes[this.rootTriumphPresentationHash]);
     // Root Node
     // Grab root's children (7 main triumph categories)
-    for(let category in presentNodes[this.rootTriumphPresentation].children.presentationNodes) {
-      let categoryHash = presentNodes[this.rootTriumphPresentation].children.presentationNodes[category].presentationNodeHash;
+    for(let category in presentNodes[this.rootTriumphPresentationHash].children.presentationNodes) {
+      let categoryHash = presentNodes[this.rootTriumphPresentationHash].children.presentationNodes[category].presentationNodeHash;
       let categoryNode: PresentationNode = this.mapPresentationNode(presentNodes[categoryHash]);
       //console.log(`ENTERING CATEGORY: ${presentNodes[categoryHash].displayProperties.name}`);
       // Grab children of main categories (sub categories)
@@ -130,19 +141,21 @@ export class CharacterHomeComponent implements OnInit {
           for(let triumph in presentNodes[sectionHash].children.records) {
             let triumphHash = presentNodes[sectionHash].children.records[triumph].recordHash;
             let triumphGrabbed = this.makeTriumphObject(triumphHash, userTriumphs)
-            tList.push(triumphGrabbed);
-            sectionNode.children.records.push(triumphGrabbed);
+            this.triumphList[triumphHash] = triumphGrabbed;
+            sectionNode.children.records.push(triumphHash);
             //console.log(`triumph ${subSubSubIndex}: `, this.manifest.DestinyRecordDefinition[subSubSubHash]);
           }
-          subCategoryNode.children.presentationNodes.push(sectionNode);
+          subCategoryNode.children.presentationNodes.push(sectionHash);
+          presetNodeList[sectionHash] = sectionNode;
         }
-        categoryNode.children.presentationNodes.push(subCategoryNode);
+        categoryNode.children.presentationNodes.push(subCategoryHash);
+        presetNodeList[subCategoryHash] = subCategoryNode;
       }
-      rootNode.children.presentationNodes.push(categoryNode);
+      rootNode.children.presentationNodes.push(categoryHash);
+      presetNodeList[categoryHash] = categoryNode;
     }
-    this.presentationOrganization = rootNode;
-    //console.log(rootNode);
-    return tList;
+    presetNodeList[this.rootTriumphPresentationHash] = rootNode;
+    return presetNodeList;
   }
 
   /*
@@ -156,15 +169,13 @@ export class CharacterHomeComponent implements OnInit {
       let presentNode = new PresentationNode();
 
       // First we setup the display properties and assign them to our new node
-      let display = new DisplayProperties();
-      display.hasIcon = presentationNode.displayProperties.hasIcon;
-      display.icon = display.hasIcon ? presentationNode.displayProperties.icon : undefined;
-      display.description = presentationNode.displayProperties.description;
-      display.name = presentationNode.displayProperties.name;
-      presentNode.displayProperties = display;
+      presentNode.hasIcon = presentationNode.displayProperties.hasIcon;
+      presentNode.icon = presentNode.hasIcon ? presentationNode.displayProperties.icon : undefined;
+      presentNode.description = presentationNode.displayProperties.description;
+      presentNode.name = presentationNode.displayProperties.name;
 
       // then we grab all the root level properties
-      presentNode.rootViewIcon = display.hasIcon ? presentationNode.rootViewIcon : undefined;
+      presentNode.rootViewIcon = presentNode.hasIcon ? presentationNode.rootViewIcon : undefined;
       presentNode.scope = presentationNode.scope;
       presentNode.parentNodeHashes = presentationNode.parentNodeHashes;
       presentNode.hash = presentationNode.hash;
@@ -173,8 +184,8 @@ export class CharacterHomeComponent implements OnInit {
       // finally we set up the children arrays to be empty.
       // these will be filled in the other section.
       presentNode.children = new Children();
-      presentNode.children.presentationNodes = new Array<PresentationNode>();
-      presentNode.children.records = new Array<Triumph>();
+      presentNode.children.presentationNodes = new Array<string>();
+      presentNode.children.records = new Array<string>();
 
       /*
        * note, the above COULD be built with a recursive definition.
@@ -204,6 +215,7 @@ export class CharacterHomeComponent implements OnInit {
       newTriumph.description = this.manifest.DestinyRecordDefinition[recordNodeHash].displayProperties.description;
       newTriumph.iconPath = `https://www.bungie.net${this.manifest.DestinyRecordDefinition[recordNodeHash].displayProperties.icon}`;
       newTriumph.scoreValue = this.manifest.DestinyRecordDefinition[recordNodeHash].completionInfo.ScoreValue;
+      newTriumph.hash = recordNodeHash;
 
       if(this.manifest.DestinyRecordDefinition[recordNodeHash].scope) {
         // this is a character based triumph
@@ -316,6 +328,34 @@ export class CharacterHomeComponent implements OnInit {
       }
     );
   }
+
+  setCategory(hash: string) {
+    this.categorySelection = hash;
+    this.subCategorySelection = this.presentationNodeList[hash].children.presentationNodes[0];
+    this.sectionSelection = this.presentationNodeList[this.subCategorySelection].children.presentationNodes[0];
+    console.log(`category has been selected: ${this.categorySelection}`);
+    console.log(`sub category has been selected: ${this.subCategorySelection}`);
+    console.log(`section has been selected: ${this.sectionSelection}`);
+  }
+
+  setSubCategory(hash: string) {
+    this.subCategorySelection = hash;
+    this.sectionSelection = this.presentationNodeList[hash].children.presentationNodes[0];;
+    console.log(`sub category has been selected: ${this.subCategorySelection}`);
+    console.log(`section has been selected: ${this.sectionSelection}`);
+  }
+
+  setSection(hash: string) {
+    this.sectionSelection = hash;
+    console.log(`section has been selected: ${this.sectionSelection}`);
+  }
+
+  trackTriumph(hash: string) {
+    this.tracker.addTriumph(this.triumphList[hash]) ?
+    console.log(`Added triumph ${hash} to tracked list.`) :
+    null;
+  }
+
 
   /*
    * Input: number

@@ -23,49 +23,60 @@
   </form>
 
   <!-- Category Icons and Links -->
-  <div *ngIf="presentationOrganization">
-    <h1>{{ presentationOrganization.displayProperties.name }}</h1>
+  <div *ngIf="presentationNodeList">
+    <h1>{{ presentationNodeList[rootTriumphPresentationHash].name }}</h1>
     <div class="row no-gutters">
-      <div class="col-3 col-sm category-column" *ngFor="let node of presentationOrganization.children.presentationNodes">
-        <a href="#">
-          <img class="icon-spacing" style='width: 100%;' src='https://www.bungie.net{{node.rootViewIcon}}'/>
-        </a>
+      <div class="col-3 col-sm category-column" *ngFor="let categoryHash of presentationNodeList[rootTriumphPresentationHash].children.presentationNodes">
+          <img class="icon-spacing click" (click)="setCategory(categoryHash)" style='width: 100%;' src='https://www.bungie.net{{presentationNodeList[categoryHash].rootViewIcon}}'/>
         </div>
     </div>
   </div>
 </div>
 
 <!-- Lower portion of Screen -->
+
 <div class="container-fluid">
 
   <div class="row">
 
     <!-- Left Sidebar -->
-    <div class="col-4 min-padding" style="padding-left: 15px !important;">
-      <div class="row no-gutters" *ngIf="presentationOrganization">
-        <div class="col sub-category" *ngFor="let subCategory of presentationOrganization.children.presentationNodes[categorySelection].children.presentationNodes">
-          <div class="card bg-dark sub-category-card">
-            <img class="card-img" src="https://www.bungie.net{{subCategory.rootViewIcon}}">
+    <div class="col-4 min-padding" style="padding-left: 15px !important;" *ngIf="categorySelection">
+      <div class="row no-gutters">
+        <ng-template ngFor let-subCategoryHash [ngForOf]="presentationNodeList[categorySelection].children.presentationNodes">
+          <div class="col sub-category" *ngIf="presentationNodeList[subCategoryHash].hasIcon">
+              <div class="card bg-dark sub-category-card click" (click)="setSubCategory(subCategoryHash)">
+                <img class="card-img" src="https://www.bungie.net{{presentationNodeList[subCategoryHash].rootViewIcon}}">
+              </div>
           </div>
-        </div>
+        </ng-template>
       </div>
+
+      <div class="row no-gutters" *ngIf="subCategorySelection">
+        <ng-template ngFor let-sectionHash [ngForOf]="presentationNodeList[subCategorySelection].children.presentationNodes">
+          <div class="w-100 card bg-dark min-margins text-white click section-card" (click)="setSection(sectionHash)">
+            <p>{{ presentationNodeList[sectionHash].name }}</p>
+          </div>
+        </ng-template>
+      </div>
+
     </div>
+
 
     <!-- All Triumphs -->
     <div class="col-8">
-      <div class="row">
-        <div *ngFor="let triumph of triumphList" class="col-sm-12 col-md-6 col-lg-4" style="margin-top: 0.5rem; margin-bottom: 0.5rem;">
-          <div *ngIf="triumph" class="card bg-dark flex-row flex-wrap text-white" style="height: 100%;">
+      <div class="row" *ngIf="sectionSelection">
+        <div *ngFor="let triumphHash of presentationNodeList[sectionSelection].children.records" class="col-sm-12 col-md-6 col-lg-4" style="margin-top: 0.5rem; margin-bottom: 0.5rem;">
+          <div *ngIf="triumphHash" class="card bg-dark flex-row flex-wrap text-white" style="height: 100%;">
               <div class="triumphIcon">
-                  <img width=100% src='{{ triumph.iconPath }}'>
+                  <img width=100% src='{{ triumphList[triumphHash].iconPath }}'>
               </div>
               <div class="card-block px-2">
-                  <h4 class="card-title text-margin">{{ triumph.name }}</h4>
-                  <p class="card-text text-margin">{{ triumph.description }}</p>
+                  <h4 class="card-title text-margin">{{ triumphList[triumphHash].name }}</h4>
+                  <p class="card-text text-margin">{{ triumphList[triumphHash].description }}</p>
               </div>
               <div class="w-100"></div>
               <div class="card-footer w-100">
-                <div *ngFor="let objective of triumph.objectives">
+                <div *ngFor="let objective of triumphList[triumphHash].objectives">
                   <p class="card-text text-margin">{{ objective.description }}</p>
                   <div class="progress">
                     <div class="progress-bar bg-secondary" [ngStyle]="{'width': objective.completionPercent + '%'}">
@@ -75,6 +86,7 @@
                     </div>
                   </div>
                 </div>
+                <button (click)="trackTriumph(triumphHash)">Track</button>
               </div>
           </div>
         </div>
