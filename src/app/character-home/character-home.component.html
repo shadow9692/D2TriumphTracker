@@ -1,4 +1,7 @@
+<!-- Upper Portion of Screen -->
 <div class="container-fluid">
+
+  <!-- User Search Form -->
   <h2>Please input your information, then click search!</h2>
   <form [formGroup]="userSearchForm" (ngSubmit)="onSearchUser()">
     <div class="row">
@@ -19,40 +22,25 @@
     </div>
   </form>
 
+  <!-- Category Icons and Links -->
   <div *ngIf="presentationOrganization">
-    <p>{{ presentationOrganization.displayProperties.name }}</p>
+    <h1>{{ presentationOrganization.displayProperties.name }}</h1>
     <div class="row no-gutters">
       <div class="col-3 col-sm category-column" *ngFor="let node of presentationOrganization.children.presentationNodes">
-        <img class="icon-spacing" style='width: 100%;' src='https://www.bungie.net{{node.rootViewIcon}}' />
-      </div>
+        <a href="#">
+          <img class="icon-spacing" style='width: 100%;' src='https://www.bungie.net{{node.rootViewIcon}}'/>
+        </a>
+        </div>
     </div>
   </div>
 </div>
 
-  <!--
-  <div *ngFor="let triumph of triumphList" class="card">
-    <div class="card-header">
-        <strong>{{ triumph.title }}</strong>
-    </div>
-    <div class="card-body">
-      <img width=30 style='align-content: flex-start' src='{{ triumph.iconPath }}' />
-      <p class="card-text">{{ triumph.description }}</p>
-      <div *ngFor="let objective of triumph.objectives">
-        <p class="card-text">{{ objective.description }}</p>
-        <div class="progress">
-          <div class="progress-bar" [ngStyle]="{'width': objective.completePercent + '%'}">
-            {{ objective.currentProgres }} / {{ objective.completionValue }}
-          </div>
-        </div>
-      </div>
-    </div>
-  </div>
-  -->
-
+<!-- Lower portion of Screen -->
 <div class="container-fluid">
 
   <div class="row">
 
+    <!-- Left Sidebar -->
     <div class="col-4 min-padding" style="padding-left: 15px !important;">
       <div class="row no-gutters" *ngIf="presentationOrganization">
         <div class="col sub-category" *ngFor="let subCategory of presentationOrganization.children.presentationNodes[categorySelection].children.presentationNodes">
@@ -63,6 +51,7 @@
       </div>
     </div>
 
+    <!-- All Triumphs -->
     <div class="col-8">
       <div class="row">
         <div *ngFor="let triumph of triumphList" class="col-sm-12 col-md-6 col-lg-4" style="margin-top: 0.5rem; margin-bottom: 0.5rem;">
@@ -92,7 +81,5 @@
       </div>
     </div>
   </div>
-
-
 
 </div>

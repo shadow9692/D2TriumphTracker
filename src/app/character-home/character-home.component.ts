@@ -8,7 +8,6 @@ import { User, UserInfo } from '../Models/User';
 import { Triumph, Objective, stateMask } from '../Models/Triumph';
 import { UserTriumph, UserTriumphObjective } from '../Models/UserTriumph';
 import { PresentationNode, DisplayProperties, Children } from '../Models/presentationNode';
-import { resolve, reject } from 'q';
 
 
 @Component({
@@ -49,16 +48,20 @@ export class CharacterHomeComponent implements OnInit {
     this.userSearchForm = this.formBuilder.group({
       platform: [2],
       username: ['shadow9692']
-    })
+    });
   }
 
-  buildSearchInfo(inputControls): UserInfo {
-    return {platform: inputControls.platform.value, username: inputControls.username.value};
-  }
-
+  /*
+   * Input: empty
+   * Output: empty
+   * this function is called upon pressing the user search button on the web-page
+   * this will attempt to locate a user in the bungie api and grab all of their triumphs.
+   */
   onSearchUser() {
-    let userSearchParameters: UserInfo = this.buildSearchInfo(this.userSearchForm.controls);
-    this.triumphList.length = 0;
+    let userSearchParameters: UserInfo = {
+      platform: this.userSearchForm.controls.platform.value,
+      username: this.userSearchForm.controls.username.value
+    };
     this.d2Api.searchUser(userSearchParameters)
       .pipe(
         flatMap((userData: User) => {
@@ -69,7 +72,6 @@ export class CharacterHomeComponent implements OnInit {
           //console.log(this.manifest.DestinyObjectiveDefinition['3488693772']);
           console.log(userTriumphs);
           //this.testingState(userTriumphs);
-          //this.logExampleData(userTriumphs, profileRecordHash, characterRecordhash);
           this.triumphList = this.createPresentationOrganization(this.manifest.DestinyPresentationNodeDefinition, userTriumphs);
         },
         (err: any) => {
@@ -102,19 +104,6 @@ export class CharacterHomeComponent implements OnInit {
     }
     console.log(stateArray);
     console.log(stateMaskDict);
-  }
-
-  iDontKnow(data) {
-    let hideList = new Array<string>();
-    for(let charHash in data.characterRecords.data) {
-      let hash = '2032752906';
-      console.log(data.characterRecords.data[charHash].records[hash]);
-      for(let recordHash in data.characterRecords.data[charHash].records) {
-        break;
-        let state = data.characterRecords.data[charHash].records[recordHash].state;
-        if(!!(state & 16)) hideList.push(recordHash);
-      }
-    }
   }
 
   // takes in profile ?components=900 response as input.
@@ -156,6 +145,12 @@ export class CharacterHomeComponent implements OnInit {
     return tList;
   }
 
+  /*
+   * input: presentation node from D2 manifest
+   * output: presentation node object with empty child section.
+   * this function maps the data in the manifest to the object
+   * definition setup in this application to be used elsewhere.
+   */
   mapPresentationNode(presentationNode: any): PresentationNode {
     try{
       let presentNode = new PresentationNode();
@@ -196,57 +191,12 @@ export class CharacterHomeComponent implements OnInit {
     }
   }
 
-  buildThing(data: any, hash1: string) {
-    // removed from onInit for now
-    let i = 0;
-    let c = 0;
-    for(let hash in data.characterRecords.data[hash1].records){
-      let aTriumph: Triumph = this.makeTriumphObject(hash, data.characterRecords.data[hash1]);
-      if(aTriumph) this.triumphList.push(aTriumph);
-      else ++c;
-      ++i;
-    }
-    console.log(`Triumphs analyzed: ${i}\nErrors found: ${c}\nTotal triumphs displayed: ${this.triumphList.length}`);
-  }
-
-  testMethod(data: any) {
-    // get all the records lists
-    let profileRecords = data.profileRecords.data.records;
-    let characterRecords = new Array<any>();
-    characterRecords.push(data.characterRecords.data['2305843009263935152'].records);
-    characterRecords.push(data.characterRecords.data['2305843009263935153'].records);
-    characterRecords.push(data.characterRecords.data['2305843009378434254'].records);
-    let uniqueCount = 0;
-    let uniqueHashes = new Array<string>();
-
-    console.log(characterRecords[0]['20493479']);
-
-    for(let hash in characterRecords[0]){
-      let obj1 = characterRecords[0][hash];
-      let obj2 = characterRecords[1][hash];
-      if(obj1.state !== obj2.state){
-        console.log(`hash mismatch on State: ${hash}`);
-        console.log(obj1, obj2);
-      }
-      if(obj1.objectives.length !== obj2.objectives.length) {
-        console.log(`hash mismatch on Objectives Length: ${hash}`);
-      }
-    }
-
-    for(let i = 0; i < 3; ++i) {
-      for(let hash in characterRecords[i]) {
-        if(!profileRecords[hash] && !characterRecords[(i+1)%3][hash] && !characterRecords[(i+2)%3][hash]) {
-          ++uniqueCount;
-          uniqueHashes.push(hash);
-        }
-      }
-    }
-
-    console.log(uniqueCount);
-
-    //do some stuff
-  }
-
+  /*
+   * Input: hash value for triumph, list of user triumphs
+   * Output: full triumph object as defined by this applicaiton
+   * this function grabs data from the manifest and the searched user
+   * in order to build a triumph object.
+   */
   makeTriumphObject(recordNodeHash: string, userTriumphs: any): Triumph {
     let newTriumph: Triumph = new Triumph();
     try {
@@ -274,6 +224,13 @@ export class CharacterHomeComponent implements OnInit {
     }
   }
 
+  /*
+   * Input: triumph to add data to, hash value for triumph, user profile section
+   * Output: updates triumph data based upon user data.
+   * this function takes a triumph in and modifies data in it based upon the user profile.
+   * this function is only called if the triumph has scope of 0, and is therefore a
+   * profile triumph.
+   */
   fillProfileTriumphData(triumph: Triumph, recordHash: string, profileTriumphs: any) {
     let userTriumph: UserTriumph = profileTriumphs[recordHash];
     triumph.state = new stateMask(userTriumph.state);
@@ -295,6 +252,13 @@ export class CharacterHomeComponent implements OnInit {
     });
   }
 
+  /*
+   * Input: triumph to add data to, hash value for triumph, character profile section
+   * Output: updates triumph data based upon user data.
+   * this function takes a triumph in and modifies data in it based upon the user characters.
+   * this function is only called if the triumph has scope of 1, and is therefore a
+   * character triumph.
+   */
   fillCharacterTriumphData(triumph: Triumph, recordHash: string, characterTriumphs: any) {
     let charArray = new Array<UserTriumph>();
     //let userTriumph: UserTriumph;
@@ -322,11 +286,11 @@ export class CharacterHomeComponent implements OnInit {
   }
 
   /*
+   * Input: a UserTriumphObjective object to be mapped
+   * Output: a promise that returns a completed Objective object
    * This function maps a UserTriumphObjective to an Objective
    * the intention is to get all required data both from user data
    * and the Manifest data
-   * Input: a UserTriumphObjective object to be mapped
-   * Output: a promise that returns a completed Objective object
    */
   mapObjective(userObjective: UserTriumphObjective): Promise<Objective> {
     return new Promise(
@@ -353,22 +317,13 @@ export class CharacterHomeComponent implements OnInit {
     );
   }
 
-  logExampleData(playerTriumphs, profileTriumphHash, characterTriumphHash) {
-    console.log('Example data: ');
-    console.log(`manifest data for profile triumph: \n`, this.manifest.DestinyRecordDefinition[profileTriumphHash]);
-    console.log(`objectives: `);
-    this.manifest.DestinyRecordDefinition[profileTriumphHash].objectiveHashes.forEach(objectiveHash => {
-      console.log(this.manifest.DestinyObjectiveDefinition[objectiveHash]);
-    });
-    let ut: UserTriumph = playerTriumphs.profileRecords.data.records[profileTriumphHash]
-    console.log(`user data for profile triumph: \n`, ut);
-    console.log(`manifest data for character triumph: \n`, this.manifest.DestinyRecordDefinition[characterTriumphHash]);
-    for(let character in playerTriumphs.characterRecords.data) {
-      console.log(`user data for character triumph: \n`, playerTriumphs.characterRecords.data[character].records[characterTriumphHash]);
-    }
-  }
-
-  // Only a visual helper function
+  /*
+   * Input: number
+   * Output: converted string
+   * Only a visual helper function
+   * this function takes in a number and will return a formatted string with commas.
+   * e.g.: 500132154809 -> 500,132,154,809
+   */
   formatNumber(num) {
     return num.toString().replace(/(\d)(?=(\d{3})+(?!\d))/g, '$1,')
   }

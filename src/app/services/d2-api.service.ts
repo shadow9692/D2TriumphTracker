@@ -83,31 +83,6 @@ export class D2ApiService {
   }
 
   //#region MANIFEST
-  getManifest() {
-    console.log('Entering getManifest!');
-    return this.getManifestUrl().subscribe(
-      (data: any) => {
-        if(data) {
-          return this.getManifestJSON(data).subscribe(
-            (data: any) => {
-              this.manifest = data;
-              console.log(data);
-            },
-            (err: any) => {
-              console.error(`ERROR: Get Manifest failed! \n${err}`);
-            }
-          )
-        }
-        else{
-          console.error(`ERROR: Get Manifest failed!`);
-        }
-      },
-      (err: any) => {
-        console.error(`ERROR: Get Manifest failed! \n${err}`);
-      }
-    )
-  }
-
   getManifestUrl() {
     let apiUrl = `${this.bungieUrl}/Destiny2/Manifest/`;
     return this.http.get(apiUrl, this.httpOptions).pipe(
@@ -132,7 +107,7 @@ export class D2ApiService {
       return this.http.get(apiUrl);
     }
     else{
-      console.log("this got hit.")
+      console.log("invalid URL returned.")
     }
   }
   //#endregion
