@@ -22,8 +22,12 @@
     </div>
   </form>
 
+  <div class="container-fluid" *ngIf="loading">
+    <h1 id="loadingText">Loading...</h1>
+  </div>
+
   <!-- Category Icons and Links -->
-  <div *ngIf="presentationNodeList">
+  <div *ngIf="presentationNodeList && !loading">
     <h1>{{ presentationNodeList[rootTriumphPresentationHash].name }}</h1>
     <div class="row no-gutters">
       <div class="col-3 col-sm category-column" *ngFor="let categoryHash of presentationNodeList[rootTriumphPresentationHash].children.presentationNodes">
@@ -35,7 +39,7 @@
 
 <!-- Lower portion of Screen -->
 
-<div class="container-fluid">
+<div class="container-fluid" *ngIf="!loading">
 
   <div class="row">
 

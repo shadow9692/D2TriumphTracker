@@ -28,6 +28,7 @@ export class CharacterHomeComponent implements OnInit {
   public triumphList = new Array<Triumph>();
   public presentationNodeList;
 
+  public loading: boolean = false;
   public categorySelection: string;
   public subCategorySelection: string;
   public sectionSelection: string;
@@ -65,6 +66,10 @@ export class CharacterHomeComponent implements OnInit {
       platform: this.userSearchForm.controls.platform.value,
       username: this.userSearchForm.controls.username.value
     };
+    this.loading = true;
+    this.categorySelection = undefined;
+    this.subCategorySelection = undefined;
+    this.sectionSelection = undefined;
     this.d2Api.searchUser(userSearchParameters)
       .pipe(
         flatMap((userData: User) => {
@@ -78,6 +83,7 @@ export class CharacterHomeComponent implements OnInit {
           if(this.presentationNodeList) console.log("empty is true!");
           this.presentationNodeList = this.createPresentationNodeList(this.manifest.DestinyPresentationNodeDefinition, userTriumphs);
           console.log(this.presentationNodeList);
+          this.loading = false;
         },
         (err: any) => {
           console.error(err);
