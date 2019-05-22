@@ -1,13 +1,11 @@
 import { NgModule } from '@angular/core';
 import { Routes, RouterModule } from '@angular/router';
-import { CharacterHomeComponent } from './character-home/character-home.component';
-import { HomePageComponent } from './home-page/home-page.component';
+import { TriumphHomeComponent } from './triumph-home/triumph-home.component';
 import { ManifestResolverService } from './services/manifest-resolver.service';
 
 const routes: Routes = [
-  {path: 'home', component: HomePageComponent},
-  {path: 'character', component: CharacterHomeComponent, resolve: {resolvedManifest: ManifestResolverService}},
-  {path: '', redirectTo: '/home', pathMatch: 'full'}
+  {path: 'triumph', component: TriumphHomeComponent, resolve: {resolvedManifest: ManifestResolverService}},
+  {path: '', redirectTo: '/triumph', pathMatch: 'full'}
 ];
 
 @NgModule({

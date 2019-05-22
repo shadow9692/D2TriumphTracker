@@ -9,14 +9,16 @@ import { Triumph, Objective, stateMask } from '../Models/Triumph';
 import { UserTriumph, UserTriumphObjective } from '../Models/UserTriumph';
 import { PresentationNode, Children } from '../Models/presentationNode';
 import { TriumphTrackerService } from '../services/triumph-tracker.service';
+import { ManifestService } from '../services/manifest.service';
+import { TriumphService } from '../services/triumph.service';
 
 
 @Component({
-  selector: 'app-character-home',
-  templateUrl: './character-home.component.html',
+  selector: 'app-component-home',
+  templateUrl: './triumph-home.component.html',
   styles: []
 })
-export class CharacterHomeComponent implements OnInit {
+export class TriumphHomeComponent implements OnInit {
 
   //#region Variable_Declarations
   private manifest: any;
@@ -40,9 +42,11 @@ export class CharacterHomeComponent implements OnInit {
   ]
   //#endregion
 
-  constructor(private d2Api: D2ApiService,
-              private route: ActivatedRoute,
+  constructor(private route: ActivatedRoute,
               private formBuilder: FormBuilder,
+              private triumphService: TriumphService,
+              private d2Api: D2ApiService,
+              private manifestService: ManifestService,
               private tracker: TriumphTrackerService) { }
 
   ngOnInit() {
@@ -53,6 +57,7 @@ export class CharacterHomeComponent implements OnInit {
       platform: [2],
       username: ['shadow9692']
     });
+    this.onSearchUser();
   }
 
   /*
