@@ -20,12 +20,11 @@ export class TriumphService {
   //#region VariableDeclarations
   public readonly rootTriumphPresentationHash: string = '1024788583';
   public presentationNodeList;
-  public fullTriumphList = {};
+  public fullTriumphList;
   //#endregion
 
   constructor(private d2Api: D2ApiService,
-              private manifestService: ManifestService,
-              private triumphTracker: TriumphTrackerService) { }
+              private manifestService: ManifestService) { }
 
 
   buildData(userSearchParameters: UserInfo): Observable<any> {
@@ -83,6 +82,7 @@ export class TriumphService {
    */
   createPresentationNodeList(userTriumphs: any) {
     let presetNodeList = {};
+    this.fullTriumphList = {};
     let rootNode: PresentationNode = this.mapPresentationNode(this.manifestService.manifest.DestinyPresentationNodeDefinition[this.rootTriumphPresentationHash]);
     // Root Node
     // Grab root's children (7 main triumph categories)

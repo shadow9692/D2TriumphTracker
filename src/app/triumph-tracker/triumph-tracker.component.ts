@@ -10,9 +10,14 @@ import { TriumphService } from '../services/triumph.service';
 export class TriumphTrackerComponent implements OnInit {
 
   constructor(public tracker: TriumphTrackerService,
-              private triumphService: TriumphService) { }
+              public triumphService: TriumphService) { }
 
   ngOnInit() {
+  }
+
+  unTrackTriumph(hash: string) {
+    this.tracker.removeTriumph(hash);
+    this.tracker.logTriumphs();
   }
 
 }

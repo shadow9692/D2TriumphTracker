@@ -95,7 +95,7 @@ export class TriumphHomeComponent implements OnInit {
   }
 
   trackTriumph(hash: string) {
-    this.tracker.addTriumph(this.triumphService.fullTriumphList[hash]) ?
+    this.tracker.addTriumph(hash) ?
     console.log(`Added triumph ${hash} to tracked list.`) :
     null;
   }
