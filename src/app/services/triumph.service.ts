@@ -48,6 +48,32 @@ export class TriumphService {
     );
   }
 
+  testingState(userData: any) {
+    let stateArray = new Array<number>();
+    for(let profTriumphHash in userData.profileRecords.data.records) {
+      let state = userData.profileRecords.data.records[profTriumphHash].state;
+      if(!(stateArray.includes(state))) {
+        console.log(`new state encountered: ${state}`);
+        stateArray.push(state);
+      }
+    }
+    for(let characterHash in userData.characterRecords.data) {
+      for(let charTriumphHash in userData.characterRecords.data[characterHash].records) {
+        let state = userData.characterRecords.data[characterHash].records[charTriumphHash].state;
+        if(!(stateArray.includes(state))) {
+          console.log(`new state encountered: ${state}`);
+          stateArray.push(state);
+        }
+      }
+    }
+    let stateMaskDict = {};
+    for(let state of stateArray){
+      stateMaskDict[state] = new stateMask(state);
+    }
+    console.log(stateArray);
+    console.log(stateMaskDict);
+  }
+
     /*
    * Input: Manifest presentation Definition, user triumph list
    * Output: presentation node dictionary

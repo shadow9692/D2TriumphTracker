@@ -38,6 +38,7 @@ export class TriumphTrackerService {
 
   removeTriumph(hashOrIndex) {
     // need to figure out how i'm going to do this AFTER I make the new page.
+
   }
 
   updateAllTriumphs() {

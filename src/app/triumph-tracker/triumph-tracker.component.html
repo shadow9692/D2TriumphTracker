@@ -1,3 +1,29 @@
-<p>
-  triumph-tracker works!
-</p>
+<div class="container-fluid">
+  <div class="row" *ngIf="tracker.trackedTriumphList">
+    <div *ngFor="let triumph of tracker.trackedTriumphList" class="col-12 col-sm-6 col-md-4 col-lg-3" style="margin-top: 0.5rem; margin-bottom: 0.5rem;">
+      <div *ngIf="triumph" class="card bg-dark flex-row flex-wrap text-white" style="height: 100%;">
+          <div class="triumphIcon">
+              <img width=100% src='{{ triumph.iconPath }}'>
+          </div>
+          <div class="card-block px-2">
+              <h4 class="card-title text-margin">{{ triumph.name }}</h4>
+              <p class="card-text text-margin">{{ triumph.description }}</p>
+          </div>
+          <div class="w-100"></div>
+          <div class="card-footer w-100">
+            <div *ngFor="let objective of triumph.objectives">
+              <p class="card-text text-margin">{{ objective.description }}</p>
+              <div class="progress">
+                <div class="progress-bar bg-secondary" [ngStyle]="{'width': objective.completionPercent + '%'}">
+                    <span class="justify-content-center d-flex position-absolute w-100" style="color: #000; font-weight: bold;">
+                        {{ objective.progress }} / {{ objective.completionValue }}
+                    </span>
+                </div>
+              </div>
+            </div>
+            <button (click)="unTrackTriumph()">Un-Track</button>
+          </div>
+      </div>
+    </div>
+  </div>
+</div>

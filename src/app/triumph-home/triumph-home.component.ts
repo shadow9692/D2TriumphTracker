@@ -1,15 +1,9 @@
 import { Component, OnInit } from '@angular/core';
-import { flatMap } from 'rxjs/operators';
 import { ActivatedRoute } from '@angular/router';
 import { FormBuilder, FormGroup } from '@angular/forms';
 
-import { D2ApiService } from '../services/d2-api.service';
-import { User, UserInfo } from '../models/user';
-import { Triumph, Objective, stateMask } from '../models/triumph';
-import { UserTriumph, UserTriumphObjective } from '../models/userTriumph';
-import { PresentationNode, Children } from '../models/presentationNode';
+import { UserInfo } from '../models/user';
 import { TriumphTrackerService } from '../services/triumph-tracker.service';
-import { ManifestService } from '../services/manifest.service';
 import { TriumphService } from '../services/triumph.service';
 
 
@@ -39,8 +33,6 @@ export class TriumphHomeComponent implements OnInit {
   constructor(private route: ActivatedRoute,
               private formBuilder: FormBuilder,
               public triumphService: TriumphService,
-              private d2Api: D2ApiService,
-              private manifestService: ManifestService,
               private tracker: TriumphTrackerService) { }
 
   ngOnInit() {
@@ -79,32 +71,6 @@ export class TriumphHomeComponent implements OnInit {
         console.log(err);
       }
     );
-  }
-
-  testingState(userData: any) {
-    let stateArray = new Array<number>();
-    for(let profTriumphHash in userData.profileRecords.data.records) {
-      let state = userData.profileRecords.data.records[profTriumphHash].state;
-      if(!(stateArray.includes(state))) {
-        console.log(`new state encountered: ${state}`);
-        stateArray.push(state);
-      }
-    }
-    for(let characterHash in userData.characterRecords.data) {
-      for(let charTriumphHash in userData.characterRecords.data[characterHash].records) {
-        let state = userData.characterRecords.data[characterHash].records[charTriumphHash].state;
-        if(!(stateArray.includes(state))) {
-          console.log(`new state encountered: ${state}`);
-          stateArray.push(state);
-        }
-      }
-    }
-    let stateMaskDict = {};
-    for(let state of stateArray){
-      stateMaskDict[state] = new stateMask(state);
-    }
-    console.log(stateArray);
-    console.log(stateMaskDict);
   }
 
   setCategory(hash: string) {
