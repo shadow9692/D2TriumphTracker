@@ -8,11 +8,13 @@ import { AppComponent } from './app.component';
 import { TriumphHomeComponent } from './triumph-home/triumph-home.component';
 import { CommonModule } from '@angular/common';
 import { ReactiveFormsModule } from '@angular/forms';
+import { TriumphTrackerComponent } from './triumph-tracker/triumph-tracker.component';
 
 @NgModule({
   declarations: [
     AppComponent,
     TriumphHomeComponent,
+    TriumphTrackerComponent,
   ],
   imports: [
     CommonModule,
