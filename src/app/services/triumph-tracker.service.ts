@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import { Triumph } from '../Models/Triumph';
+import { Triumph } from '../models/triumph';
 
 @Injectable({
   providedIn: 'root'

@@ -3,7 +3,7 @@ import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { Observable, throwError } from 'rxjs';
 import { flatMap, map } from 'rxjs/operators';
 
-import { User, UserInfo } from '../Models/User';
+import { User, UserInfo } from '../models/user';
 
 
 @Injectable({
@@ -64,12 +64,11 @@ export class D2ApiService {
         map(
           (data: any) => {
             // placeholder
-            let response = data.Response;
+            let response;
             //console.log(response);
             // DO STUFF
             try {
-              //for(let hash in response.characterRecords.data[''])
-              //response = response.profileRecords.data;
+              response = data.Response;
             }
             catch (err) {
               response = null;
@@ -83,33 +82,7 @@ export class D2ApiService {
   }
 
   //#region MANIFEST
-  getManifestUrl() {
-    let apiUrl = `${this.bungieUrl}/Destiny2/Manifest/`;
-    return this.http.get(apiUrl, this.httpOptions).pipe(
-      map( (data: any) => {
-        let response: any;
-        try {
-          response = data.Response.jsonWorldContentPaths.en;
-          //console.log('Got Manifest URL')
-          return response;
-        }
-        catch (err) {
-          console.log(`Error getting URL! \n${err}`);
-          throw err;
-        }
-      })
-    );
-  }
 
-  getManifestJSON(url: string) {
-    if(url) {
-      let apiUrl = `https://www.bungie.net${url}`;
-      return this.http.get(apiUrl);
-    }
-    else{
-      console.log("invalid URL returned.")
-    }
-  }
   //#endregion
 
 }

@@ -27,11 +27,11 @@
   </div>
 
   <!-- Category Icons and Links -->
-  <div *ngIf="presentationNodeList && !loading">
-    <h1>{{ presentationNodeList[rootTriumphPresentationHash].name }}</h1>
+  <div *ngIf="triumphService.presentationNodeList && !loading">
+    <h1>{{ triumphService.presentationNodeList[triumphService.rootTriumphPresentationHash].name }}</h1>
     <div class="row no-gutters">
-      <div class="col-3 col-sm category-column" *ngFor="let categoryHash of presentationNodeList[rootTriumphPresentationHash].children.presentationNodes">
-          <img class="icon-spacing click" (click)="setCategory(categoryHash)" style='width: 100%;' src='https://www.bungie.net{{presentationNodeList[categoryHash].rootViewIcon}}'/>
+      <div class="col-3 col-sm category-column" *ngFor="let categoryHash of triumphService.presentationNodeList[triumphService.rootTriumphPresentationHash].children.presentationNodes">
+          <img class="icon-spacing click" (click)="setCategory(categoryHash)" style='width: 100%;' src='https://www.bungie.net{{triumphService.presentationNodeList[categoryHash].rootViewIcon}}'/>
         </div>
     </div>
   </div>
@@ -46,19 +46,19 @@
     <!-- Left Sidebar -->
     <div class="col-4 min-padding" style="padding-left: 15px !important;" *ngIf="categorySelection">
       <div class="row no-gutters">
-        <ng-template ngFor let-subCategoryHash [ngForOf]="presentationNodeList[categorySelection].children.presentationNodes">
-          <div class="col sub-category" *ngIf="presentationNodeList[subCategoryHash].hasIcon">
+        <ng-template ngFor let-subCategoryHash [ngForOf]="triumphService.presentationNodeList[categorySelection].children.presentationNodes">
+          <div class="col sub-category" *ngIf="triumphService.presentationNodeList[subCategoryHash].hasIcon">
               <div class="card bg-dark sub-category-card click" (click)="setSubCategory(subCategoryHash)">
-                <img class="card-img" src="https://www.bungie.net{{presentationNodeList[subCategoryHash].rootViewIcon}}">
+                <img class="card-img" src="https://www.bungie.net{{triumphService.presentationNodeList[subCategoryHash].rootViewIcon}}">
               </div>
           </div>
         </ng-template>
       </div>
 
       <div class="row no-gutters" *ngIf="subCategorySelection">
-        <ng-template ngFor let-sectionHash [ngForOf]="presentationNodeList[subCategorySelection].children.presentationNodes">
+        <ng-template ngFor let-sectionHash [ngForOf]="triumphService.presentationNodeList[subCategorySelection].children.presentationNodes">
           <div class="w-100 card bg-dark min-margins text-white click section-card" (click)="setSection(sectionHash)">
-            <p>{{ presentationNodeList[sectionHash].name }}</p>
+            <p>{{ triumphService.presentationNodeList[sectionHash].name }}</p>
           </div>
         </ng-template>
       </div>
@@ -69,18 +69,18 @@
     <!-- All Triumphs -->
     <div class="col-8">
       <div class="row" *ngIf="sectionSelection">
-        <div *ngFor="let triumphHash of presentationNodeList[sectionSelection].children.records" class="col-sm-12 col-md-6 col-lg-4" style="margin-top: 0.5rem; margin-bottom: 0.5rem;">
+        <div *ngFor="let triumphHash of triumphService.presentationNodeList[sectionSelection].children.records" class="col-sm-12 col-md-6 col-lg-4" style="margin-top: 0.5rem; margin-bottom: 0.5rem;">
           <div *ngIf="triumphHash" class="card bg-dark flex-row flex-wrap text-white" style="height: 100%;">
               <div class="triumphIcon">
-                  <img width=100% src='{{ triumphList[triumphHash].iconPath }}'>
+                  <img width=100% src='{{ triumphService.fullTriumphList[triumphHash].iconPath }}'>
               </div>
               <div class="card-block px-2">
-                  <h4 class="card-title text-margin">{{ triumphList[triumphHash].name }}</h4>
-                  <p class="card-text text-margin">{{ triumphList[triumphHash].description }}</p>
+                  <h4 class="card-title text-margin">{{ triumphService.fullTriumphList[triumphHash].name }}</h4>
+                  <p class="card-text text-margin">{{ triumphService.fullTriumphList[triumphHash].description }}</p>
               </div>
               <div class="w-100"></div>
               <div class="card-footer w-100">
-                <div *ngFor="let objective of triumphList[triumphHash].objectives">
+                <div *ngFor="let objective of triumphService.fullTriumphList[triumphHash].objectives">
                   <p class="card-text text-margin">{{ objective.description }}</p>
                   <div class="progress">
                     <div class="progress-bar bg-secondary" [ngStyle]="{'width': objective.completionPercent + '%'}">

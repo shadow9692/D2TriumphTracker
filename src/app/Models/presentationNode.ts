@@ -1,4 +1,4 @@
-import { Triumph } from './Triumph';
+import { Triumph } from './triumph';
 
 export class PresentationNode {
   description: string;

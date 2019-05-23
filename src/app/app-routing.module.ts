@@ -4,7 +4,7 @@ import { TriumphHomeComponent } from './triumph-home/triumph-home.component';
 import { ManifestResolverService } from './services/manifest-resolver.service';
 
 const routes: Routes = [
-  {path: 'triumph', component: TriumphHomeComponent, resolve: {resolvedManifest: ManifestResolverService}},
+  {path: 'triumph', component: TriumphHomeComponent}, //, resolve: {resolvedManifest: ManifestResolverService}
   {path: '', redirectTo: '/triumph', pathMatch: 'full'}
 ];
 
