@@ -42,9 +42,7 @@ export class TriumphService {
         return this.d2Api.getTriumphsById(userData);
       }),
       map((userTriumphs: any) => {
-        this.presentationNodeList = this.createPresentationNodeList(this.manifestService.manifest.DestinyPresentationNodeDefinition,
-                                          this.manifestService.manifest.DestinyRecordDefinition,
-                                          userTriumphs);
+        this.presentationNodeList = this.createPresentationNodeList(userTriumphs);
         return of(true);
       })
     );
@@ -57,32 +55,32 @@ export class TriumphService {
    * updated correctly with all user data, and builds the presentation node
    * dictionary stored as { hash: presentationNode }
    */
-  createPresentationNodeList(presentNodes: any, recordNodes: any, userTriumphs: any) {
+  createPresentationNodeList(userTriumphs: any) {
     let presetNodeList = {};
-    let rootNode: PresentationNode = this.mapPresentationNode(presentNodes[this.rootTriumphPresentationHash]);
+    let rootNode: PresentationNode = this.mapPresentationNode(this.manifestService.manifest.DestinyPresentationNodeDefinition[this.rootTriumphPresentationHash]);
     // Root Node
     // Grab root's children (7 main triumph categories)
-    for(let category in presentNodes[this.rootTriumphPresentationHash].children.presentationNodes) {
-      let categoryHash = presentNodes[this.rootTriumphPresentationHash].children.presentationNodes[category].presentationNodeHash;
-      let categoryNode: PresentationNode = this.mapPresentationNode(presentNodes[categoryHash]);
-      //console.log(`ENTERING CATEGORY: ${presentNodes[categoryHash].displayProperties.name}`);
+    for(let category in this.manifestService.manifest.DestinyPresentationNodeDefinition[this.rootTriumphPresentationHash].children.presentationNodes) {
+      let categoryHash = this.manifestService.manifest.DestinyPresentationNodeDefinition[this.rootTriumphPresentationHash].children.presentationNodes[category].presentationNodeHash;
+      let categoryNode: PresentationNode = this.mapPresentationNode(this.manifestService.manifest.DestinyPresentationNodeDefinition[categoryHash]);
+      //console.log(`ENTERING CATEGORY: ${this.manifestService.manifest.DestinyPresentationNodeDefinition[categoryHash].displayProperties.name}`);
       // Grab children of main categories (sub categories)
-      for(let subCategory in presentNodes[categoryHash].children.presentationNodes) {
-        let subCategoryHash = presentNodes[categoryHash].children.presentationNodes[subCategory].presentationNodeHash;
-        let subCategoryNode: PresentationNode = this.mapPresentationNode(presentNodes[subCategoryHash]);
-        //console.log(`ENTERING SUB-CATEGORY: ${presentNodes[subCategoryHash].displayProperties.name}`);
+      for(let subCategory in this.manifestService.manifest.DestinyPresentationNodeDefinition[categoryHash].children.presentationNodes) {
+        let subCategoryHash = this.manifestService.manifest.DestinyPresentationNodeDefinition[categoryHash].children.presentationNodes[subCategory].presentationNodeHash;
+        let subCategoryNode: PresentationNode = this.mapPresentationNode(this.manifestService.manifest.DestinyPresentationNodeDefinition[subCategoryHash]);
+        //console.log(`ENTERING SUB-CATEGORY: ${this.manifestService.manifest.DestinyPresentationNodeDefinition[subCategoryHash].displayProperties.name}`);
         // grab children of sub categories (sections)
-        for(let section in presentNodes[subCategoryHash].children.presentationNodes) {
-          let sectionHash = presentNodes[subCategoryHash].children.presentationNodes[section].presentationNodeHash;
-          let sectionNode: PresentationNode = this.mapPresentationNode(presentNodes[sectionHash]);
-          //console.log(`ENTERING SECTION: ${presentNodes[subSectionHash].displayProperties.name}`)
+        for(let section in this.manifestService.manifest.DestinyPresentationNodeDefinition[subCategoryHash].children.presentationNodes) {
+          let sectionHash = this.manifestService.manifest.DestinyPresentationNodeDefinition[subCategoryHash].children.presentationNodes[section].presentationNodeHash;
+          let sectionNode: PresentationNode = this.mapPresentationNode(this.manifestService.manifest.DestinyPresentationNodeDefinition[sectionHash]);
+          //console.log(`ENTERING SECTION: ${this.manifestService.manifest.DestinyPresentationNodeDefinition[subSectionHash].displayProperties.name}`)
           // grab children of sub sections (triumphs)
-          for(let triumph in presentNodes[sectionHash].children.records) {
-            let triumphHash = presentNodes[sectionHash].children.records[triumph].recordHash;
-            let triumphGrabbed = this.makeTriumphObject(recordNodes, triumphHash, userTriumphs)
+          for(let triumph in this.manifestService.manifest.DestinyPresentationNodeDefinition[sectionHash].children.records) {
+            let triumphHash = this.manifestService.manifest.DestinyPresentationNodeDefinition[sectionHash].children.records[triumph].recordHash;
+            let triumphGrabbed = this.makeTriumphObject(triumphHash, userTriumphs)
             this.fullTriumphList[triumphHash] = triumphGrabbed;
             sectionNode.children.records.push(triumphHash);
-            //console.log(`triumph ${subSubSubIndex}: `, this.manifest.DestinyRecordDefinition[subSubSubHash]);
+            //console.log(`triumph ${subSubSubIndex}: `, this.this.manifestService.manifest.DestinyRecordDefinition[subSubSubHash]);
           }
           subCategoryNode.children.presentationNodes.push(sectionHash);
           presetNodeList[sectionHash] = sectionNode;
@@ -148,16 +146,16 @@ export class TriumphService {
    * this function grabs data from the manifest and the searched user
    * in order to build a triumph object.
    */
-  makeTriumphObject(recordNodes: any, recordNodeHash: string, userTriumphs: any): Triumph {
+  makeTriumphObject(recordNodeHash: string, userTriumphs: any): Triumph {
     let newTriumph: Triumph = new Triumph();
     try {
-      newTriumph.name = recordNodes[recordNodeHash].displayProperties.name;
-      newTriumph.description = recordNodes[recordNodeHash].displayProperties.description;
-      newTriumph.iconPath = `https://www.bungie.net${recordNodes[recordNodeHash].displayProperties.icon}`;
-      newTriumph.scoreValue = recordNodes[recordNodeHash].completionInfo.ScoreValue;
+      newTriumph.name = this.manifestService.manifest.DestinyRecordDefinition[recordNodeHash].displayProperties.name;
+      newTriumph.description = this.manifestService.manifest.DestinyRecordDefinition[recordNodeHash].displayProperties.description;
+      newTriumph.iconPath = `https://www.bungie.net${this.manifestService.manifest.DestinyRecordDefinition[recordNodeHash].displayProperties.icon}`;
+      newTriumph.scoreValue = this.manifestService.manifest.DestinyRecordDefinition[recordNodeHash].completionInfo.ScoreValue;
       newTriumph.hash = recordNodeHash;
 
-      if(recordNodes[recordNodeHash].scope) {
+      if(this.manifestService.manifest.DestinyRecordDefinition[recordNodeHash].scope) {
         // this is a character based triumph
         this.fillCharacterTriumphData(newTriumph, recordNodeHash, userTriumphs.characterRecords.data);
       }
@@ -170,7 +168,7 @@ export class TriumphService {
       return newTriumph;
     }
     catch(err) {
-      console.log(`ERROR on triumph hash: ${recordNodeHash}\nLogging object below: \n`, recordNodes[recordNodeHash]);
+      console.log(`ERROR on triumph hash: ${recordNodeHash}\nLogging object below: \n`, this.manifestService.manifest.DestinyRecordDefinition[recordNodeHash]);
       console.log(err);
       return newTriumph;
     }
