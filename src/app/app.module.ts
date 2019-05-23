@@ -6,7 +6,6 @@ import { HttpClientModule } from '@angular/common/http';
 import { AppRoutingModule } from './app-routing.module';
 import { AppComponent } from './app.component';
 import { TriumphHomeComponent } from './triumph-home/triumph-home.component';
-import { HomePageComponent } from './home-page/home-page.component';
 import { CommonModule } from '@angular/common';
 import { ReactiveFormsModule } from '@angular/forms';
 
@@ -14,7 +13,6 @@ import { ReactiveFormsModule } from '@angular/forms';
   declarations: [
     AppComponent,
     TriumphHomeComponent,
-    HomePageComponent
   ],
   imports: [
     CommonModule,
