@@ -1,7 +1,21 @@
 /* You can add global styles to this file, and also import other style files */
-.min-padding {
-  padding: 0.1rem !important;
+:root {
+  --main-bg-color: #1e1c21;
+  --main-text-color: white;
+  --test-selected-color: #62eded;
+  --completed-text-color: #f7c65b;
+  --completed-muted-color: #9e8049;
 }
+
+body {
+  background-color: var(--main-bg-color);
+  color: var(--main-text-color);
+}
+
+.min-padding {
+  padding: 0 0.1rem !important;
+}
+
 
 .section-card {
   height: 3.5rem;
@@ -15,11 +29,6 @@
   padding: 0.5rem 0rem 0rem 0.5rem;
 }
 
-.progress {
-  position: relative;
-  background-color: darkgray;
-}
-
 .card-block {
   padding: 0.2rem 0 0.2rem 0;
 }
@@ -28,23 +37,27 @@
   margin: 0 0 0.3rem 0;
 }
 
-.icon-spacing {
-  padding-right: 2%;
-  padding-left:  2%;
+.category-icon {
   max-width: 10rem;
   max-height: 10rem;
   width: auto;
   height: auto;
   border-radius: 50%;
+
+}
+
+.category-selected {
+  border: 3px solid var(--test-selected-color);
 }
 
 .category-column {
+  padding: 0rem 0.2rem 1.25rem 0.2rem !important;
   max-width: 10rem;
   max-height: 10rem;
 }
 
 .sub-category {
-  margin-top: 0.5rem;
+  margin-top: 0.35rem !important;
   max-height: 4rem;
   min-height: 2rem;
   margin: 0.1rem 1%;
@@ -53,9 +66,6 @@
 .sub-category * {
   max-height: inherit;
   min-height: inherit;
-}
-.sub-category .card {
-  border: 0;
 }
 
 .sub-category img {
@@ -69,4 +79,53 @@
 
 .click {
   cursor: pointer;
+}
+
+.triumph-spacing {
+  margin: 0.35rem 0;
+  padding: 0 0.35rem;
+}
+
+.selected {
+  border: 1px solid var(--test-selected-color);
+}
+
+.not-selected {
+  border: 1px solid var(--main-bg-color);
+}
+
+.completed-triumph {
+}
+
+  .completed-triumph .triumph-title {
+    color: var(--completed-text-color) !important;
+  }
+
+  .completed-triumph .triumph-description {
+    color: var(--completed-muted-color) !important;
+  }
+
+.complete-objective {
+  color: var(--completed-text-color) !important;
+}
+
+.complete-objective .progress {
+
+}
+
+.complete-objective .progress-bar {
+
+}
+
+.incomplete-objective {
+  color: var(--main-text-color) !important;
+}
+
+.progress {
+  position: relative;
+  background-color: darkgray;
+}
+
+.completed-progress-bar {
+  background-color: grey;
 }

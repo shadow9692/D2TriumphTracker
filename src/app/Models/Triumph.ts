@@ -9,12 +9,13 @@ export class Triumph {
             new Array<Objective>();   // List of objectives for the Triumph
 
   get triumphComplete(): boolean {    // this verifies if the entire triumph is complete or not
-    this.objectives.forEach(objective => {
-      if(objective.completionPercent < 100){
-        return false;
+    let complete = true;
+    this.objectives.forEach((obj: Objective) => {
+      if(obj.completionValue > obj.progress){
+        complete = false;
       }
     });
-    return true;
+    return complete;
   }
 }
 
@@ -27,6 +28,7 @@ export class Objective {
   // inProgressValueStyle: valueStyle;   // How to display the progress (in progress)
   // completedValueStyle: valueStyle;    // How to display the progress (completed)
   visible: boolean;                   // This is used to tell if an objective is hidden
+  // complete: boolean;                  // This tells us if the objective is complete!
 
   get completionPercent(): number {
     let percent = (this.progress / this.completionValue) * 100;

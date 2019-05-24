@@ -21,6 +21,8 @@ export class TriumphService {
   public readonly rootTriumphPresentationHash: string = '1024788583';
   public presentationNodeList;
   public fullTriumphList;
+
+  private userInformation: UserInfo;
   //#endregion
 
   constructor(private d2Api: D2ApiService,
@@ -28,6 +30,7 @@ export class TriumphService {
 
 
   buildData(userSearchParameters: UserInfo): Observable<any> {
+    this.userInformation = userSearchParameters;
     return this.manifestService.returnManifest().pipe(
       flatMap((success: boolean) => {
         if(success){
@@ -45,6 +48,16 @@ export class TriumphService {
         return of(true);
       })
     );
+  }
+
+  updateData() {
+    if(this.userInformation) {
+      return this.buildData(this.userInformation);
+    }
+    else {
+      console.log(`Error updating data. Either:\nNo User found or\nError with manifest.`);
+      return of(false);
+    }
   }
 
   testingState(userData: any) {
@@ -118,7 +131,6 @@ export class TriumphService {
       presetNodeList[categoryHash] = categoryNode;
     }
     presetNodeList[this.rootTriumphPresentationHash] = rootNode;
-    console.log(this.fullTriumphList);
     return presetNodeList;
   }
 

@@ -62,7 +62,7 @@ export class TriumphHomeComponent implements OnInit {
     this.subCategorySelection = undefined;
     this.sectionSelection = undefined;
     this.triumphService.buildData(userSearchParameters).subscribe(
-      (data: any) => {
+      (data: boolean) => {
         if(data) {
           this.loading = false;
         }

@@ -26,6 +26,25 @@ export class ManifestService {
 
   constructor(private http: HttpClient) { }
 
+  // checkManifest() {
+  //   return this.getManifestUrl().pipe(
+  //     retryWhen(errors => {
+  //       return errors.pipe(
+  //         tap(() => console.log("error, retrying get manifest...")),
+  //         delay(100)
+  //       )
+  //     }),
+  //     map(url => {
+  //       if(url && this.mVersion && this.mVersion === url) {
+  //         return of(true);
+  //       }
+  //       else if(url) {
+  //         return
+  //       }
+  //     })
+  //   )
+  // }
+
   returnManifest(): Observable<boolean> {
     return this.getManifestUrl().pipe(
       retryWhen(errors => {

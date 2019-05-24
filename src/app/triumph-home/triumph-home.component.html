@@ -1,5 +1,5 @@
 <!-- Upper Portion of Screen -->
-<div class="container-fluid">
+<div class="container-fluid" style="background-color: #1e1c21;">
 
   <!-- User Search Form -->
   <h2>Please input your information, then click search!</h2>
@@ -31,7 +31,7 @@
     <h1>{{ triumphService.presentationNodeList[triumphService.rootTriumphPresentationHash].name }}</h1>
     <div class="row no-gutters">
       <div class="col-3 col-sm category-column" *ngFor="let categoryHash of triumphService.presentationNodeList[triumphService.rootTriumphPresentationHash].children.presentationNodes">
-          <img class="icon-spacing click" (click)="setCategory(categoryHash)" style='width: 100%;' src='https://www.bungie.net{{triumphService.presentationNodeList[categoryHash].rootViewIcon}}'/>
+          <img class="category-icon click" [ngClass]="categorySelection === categoryHash ? 'category-selected' : ''" (click)="setCategory(categoryHash)" style='width: 100%;' src='https://www.bungie.net{{triumphService.presentationNodeList[categoryHash].rootViewIcon}}'/>
         </div>
     </div>
   </div>
@@ -39,16 +39,16 @@
 
 <!-- Lower portion of Screen -->
 
-<div class="container-fluid" *ngIf="!loading">
+<div class="container-fluid bg-super-dark" *ngIf="!loading">
 
   <div class="row">
 
     <!-- Left Sidebar -->
-    <div class="col-4 min-padding" style="padding-left: 15px !important;" *ngIf="categorySelection">
+    <div class="col-4 min-padding" style="padding-left: 15px !important; margin-top: 0;" *ngIf="categorySelection">
       <div class="row no-gutters">
         <ng-template ngFor let-subCategoryHash [ngForOf]="triumphService.presentationNodeList[categorySelection].children.presentationNodes">
           <div class="col sub-category" *ngIf="triumphService.presentationNodeList[subCategoryHash].hasIcon">
-              <div class="card bg-dark sub-category-card click" (click)="setSubCategory(subCategoryHash)">
+              <div class="card bg-dark sub-category-card click " [ngClass]="subCategorySelection === subCategoryHash ? 'selected' : 'not-selected'" (click)="setSubCategory(subCategoryHash)">
                 <img class="card-img" src="https://www.bungie.net{{triumphService.presentationNodeList[subCategoryHash].rootViewIcon}}">
               </div>
           </div>
@@ -57,7 +57,7 @@
 
       <div class="row no-gutters" *ngIf="subCategorySelection">
         <ng-template ngFor let-sectionHash [ngForOf]="triumphService.presentationNodeList[subCategorySelection].children.presentationNodes">
-          <div class="w-100 card bg-dark min-margins text-white click section-card" (click)="setSection(sectionHash)">
+          <div class="w-100 card bg-dark min-margins text-white click section-card" [ngClass]="sectionSelection === sectionHash ? 'selected' : 'not-selected'" (click)="setSection(sectionHash)">
             <p>{{ triumphService.presentationNodeList[sectionHash].name }}</p>
           </div>
         </ng-template>
@@ -69,21 +69,21 @@
     <!-- All Triumphs -->
     <div class="col-8">
       <div class="row" *ngIf="sectionSelection">
-        <div *ngFor="let triumphHash of triumphService.presentationNodeList[sectionSelection].children.records" class="col-sm-12 col-md-6 col-lg-4" style="margin-top: 0.5rem; margin-bottom: 0.5rem;">
-          <div *ngIf="triumphHash" class="card bg-dark flex-row flex-wrap text-white" style="height: 100%;">
+        <div *ngFor="let triumphHash of triumphService.presentationNodeList[sectionSelection].children.records" class="col-sm-12 col-md-6 col-lg-4 triumph-spacing">
+          <div *ngIf="triumphHash" class="card bg-dark flex-row flex-wrap" [ngClass]="triumphService.fullTriumphList[triumphHash].triumphComplete ? 'completed-triumph' : ''" style="height: 100%;">
               <div class="triumphIcon">
                   <img width=100% src='{{ triumphService.fullTriumphList[triumphHash].iconPath }}'>
               </div>
               <div class="card-block px-2">
-                  <h4 class="card-title text-margin">{{ triumphService.fullTriumphList[triumphHash].name }}</h4>
-                  <p class="card-text text-margin">{{ triumphService.fullTriumphList[triumphHash].description }}</p>
+                  <h4 class="card-title triumph-title text-margin">{{ triumphService.fullTriumphList[triumphHash].name }}</h4>
+                  <p class="card-text triumph-description text-margin">{{ triumphService.fullTriumphList[triumphHash].description }}</p>
               </div>
               <div class="w-100"></div>
               <div class="card-footer w-100">
-                <div *ngFor="let objective of triumphService.fullTriumphList[triumphHash].objectives">
-                  <p class="card-text text-margin">{{ objective.description }}</p>
+                <div *ngFor="let objective of triumphService.fullTriumphList[triumphHash].objectives" [ngClass]="objective.progress >= objective.completionValue ? 'complete-objective' : 'incomplete-objective'">
+                  <p class="card-text text-margin" >{{ objective.description }}</p>
                   <div class="progress">
-                    <div class="progress-bar bg-secondary" [ngStyle]="{'width': objective.completionPercent + '%'}">
+                    <div class="progress-bar completed-progress-bar" [ngStyle]="{'width': objective.completionPercent + '%'}">
                         <span class="justify-content-center d-flex position-absolute w-100" style="color: #000; font-weight: bold;">
                             {{ objective.progress }} / {{ objective.completionValue }}
                         </span>

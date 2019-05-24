@@ -9,10 +9,26 @@ import { TriumphService } from '../services/triumph.service';
 })
 export class TriumphTrackerComponent implements OnInit {
 
+  public loading: boolean = false;
+
   constructor(public tracker: TriumphTrackerService,
               public triumphService: TriumphService) { }
 
   ngOnInit() {
+  }
+
+  updateTriumphs() {
+    this.loading = true;
+    this.triumphService.updateData().subscribe(
+      (success: boolean) => {
+        if(success) {
+          this.loading = false;
+        }
+      },
+      (err: any) => {
+        console.log(`Error occurred: \n${err}`);
+      }
+    )
   }
 
   unTrackTriumph(hash: string) {

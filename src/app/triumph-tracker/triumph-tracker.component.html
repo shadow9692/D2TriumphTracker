@@ -1,6 +1,13 @@
 <div class="container-fluid">
+
+  <button class="btn btn-primary btn-block" (click)="updateTriumphs()" >Update Triumphs</button>
+
+  <div *ngIf="loading">
+    <h1>Loading...</h1>
+  </div>
+
   <div class="row" *ngIf="tracker.trackedTriumphList">
-    <div *ngFor="let triumphHash of tracker.trackedTriumphList" class="col-12 col-sm-6 col-md-4 col-lg-3" style="margin-top: 0.5rem; margin-bottom: 0.5rem;">
+    <div *ngFor="let triumphHash of tracker.trackedTriumphList" class="col-12 col-sm-6 col-md-4 col-lg-3 triumph-spacing" >
       <div *ngIf="triumphHash" class="card bg-dark flex-row flex-wrap text-white" style="height: 100%;">
           <div class="triumphIcon">
               <img width=100% src='{{ triumphService.fullTriumphList[triumphHash].iconPath }}'>
