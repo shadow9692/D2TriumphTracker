@@ -5,7 +5,6 @@ import { Observable, of } from 'rxjs';
 
 import { D2ApiService } from './d2-api.service';
 import { ManifestService } from './manifest.service';
-import { TriumphTrackerService } from './triumph-tracker.service';
 
 import { UserInfo, User } from '../models/User';
 import { PresentationNode, Children } from '../models/presentationNode';
@@ -22,7 +21,7 @@ export class TriumphService {
   public presentationNodeList;
   public fullTriumphList;
 
-  private userInformation: UserInfo;
+  public userInformation: UserInfo;
   //#endregion
 
   constructor(private d2Api: D2ApiService,
@@ -112,14 +111,16 @@ export class TriumphService {
         for(let section in this.manifestService.manifest.DestinyPresentationNodeDefinition[subCategoryHash].children.presentationNodes) {
           let sectionHash = this.manifestService.manifest.DestinyPresentationNodeDefinition[subCategoryHash].children.presentationNodes[section].presentationNodeHash;
           let sectionNode: PresentationNode = this.mapPresentationNode(this.manifestService.manifest.DestinyPresentationNodeDefinition[sectionHash]);
-          //console.log(`ENTERING SECTION: ${this.manifestService.manifest.DestinyPresentationNodeDefinition[subSectionHash].displayProperties.name}`)
-          // grab children of sub sections (triumphs)
-          for(let triumph in this.manifestService.manifest.DestinyPresentationNodeDefinition[sectionHash].children.records) {
-            let triumphHash = this.manifestService.manifest.DestinyPresentationNodeDefinition[sectionHash].children.records[triumph].recordHash;
-            let triumphGrabbed = this.makeTriumphObject(triumphHash, userTriumphs)
-            this.fullTriumphList[triumphHash] = triumphGrabbed;
-            sectionNode.children.records.push(triumphHash);
-            //console.log(`triumph ${subSubSubIndex}: `, this.this.manifestService.manifest.DestinyRecordDefinition[subSubSubHash]);
+          //console.log(`ENTERING SECTION: ${this.manifestService.manifest.DestinyPresentationNodeDefinition[sectionHash].displayProperties.name}`)
+          if(this.manifestService.manifest.DestinyPresentationNodeDefinition[sectionHash].displayProperties.name !== 'Classified') {
+            // grab children of sub sections (triumphs)
+            for(let triumph in this.manifestService.manifest.DestinyPresentationNodeDefinition[sectionHash].children.records) {
+              let triumphHash = this.manifestService.manifest.DestinyPresentationNodeDefinition[sectionHash].children.records[triumph].recordHash;
+              let triumphGrabbed = this.makeTriumphObject(triumphHash, userTriumphs)
+              this.fullTriumphList[triumphHash] = triumphGrabbed;
+              sectionNode.children.records.push(triumphHash);
+              //console.log(`triumph ${subSubSubIndex}: `, this.this.manifestService.manifest.DestinyRecordDefinition[subSubSubHash]);
+            }
           }
           subCategoryNode.children.presentationNodes.push(sectionHash);
           presetNodeList[sectionHash] = sectionNode;

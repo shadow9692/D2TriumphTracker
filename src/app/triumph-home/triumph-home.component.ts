@@ -25,8 +25,8 @@ export class TriumphHomeComponent implements OnInit {
 
   platformOptions = [
     {name: 'XBL', value: 1},
-    {name: 'PSN', value: 2},
-    {name: 'BNet', value: 4}
+    {name: 'PSN', value: 2}//,
+    //{name: 'BNet', value: 4}
   ]
   //#endregion
 
@@ -41,8 +41,13 @@ export class TriumphHomeComponent implements OnInit {
 
     this.userSearchForm = this.formBuilder.group({
       platform: [2],
-      username: ['shadow9692']
+      username: ['']
     });
+
+    if(this.triumphService.userInformation) {
+      this.userSearchForm.controls.platform.setValue(this.triumphService.userInformation.platform);
+      this.userSearchForm.controls.username.setValue(this.triumphService.userInformation.username);
+    }
     //this.onSearchUser();
   }
 
@@ -77,21 +82,21 @@ export class TriumphHomeComponent implements OnInit {
     this.categorySelection = hash;
     this.subCategorySelection = this.triumphService.presentationNodeList[hash].children.presentationNodes[0];
     this.sectionSelection = this.triumphService.presentationNodeList[this.subCategorySelection].children.presentationNodes[0];
-    console.log(`category has been selected: ${this.categorySelection}`);
-    console.log(`sub category has been selected: ${this.subCategorySelection}`);
-    console.log(`section has been selected: ${this.sectionSelection}`);
+    // console.log(`category has been selected: ${this.categorySelection}`);
+    // console.log(`sub category has been selected: ${this.subCategorySelection}`);
+    // console.log(`section has been selected: ${this.sectionSelection}`);
   }
 
   setSubCategory(hash: string) {
     this.subCategorySelection = hash;
     this.sectionSelection = this.triumphService.presentationNodeList[hash].children.presentationNodes[0];;
-    console.log(`sub category has been selected: ${this.subCategorySelection}`);
-    console.log(`section has been selected: ${this.sectionSelection}`);
+    // console.log(`sub category has been selected: ${this.subCategorySelection}`);
+    // console.log(`section has been selected: ${this.sectionSelection}`);
   }
 
   setSection(hash: string) {
     this.sectionSelection = hash;
-    console.log(`section has been selected: ${this.sectionSelection}`);
+    //console.log(`section has been selected: ${this.sectionSelection}`);
   }
 
   trackTriumph(hash: string) {
