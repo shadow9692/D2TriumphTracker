@@ -18,7 +18,7 @@ export class D2ApiService {
   private readonly bungieUrl = 'https://www.bungie.net/Platform';
   private readonly httpOptions = {
     headers: new HttpHeaders({
-      'X-API-KEY': 'df0d5a0d48254ad9a9b8d17837efc8d1'
+      'X-API-KEY': '0fd57481577f4daabc10e13eabdb05f5'
     })
   };
 
