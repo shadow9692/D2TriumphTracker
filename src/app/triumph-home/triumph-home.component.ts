@@ -19,6 +19,7 @@ export class TriumphHomeComponent implements OnInit {
   public userSearchForm: FormGroup;
 
   public loading: boolean = false;
+  public failed: boolean = false;
   public categorySelection: string;
   public subCategorySelection: string;
   public sectionSelection: string;
@@ -63,6 +64,7 @@ export class TriumphHomeComponent implements OnInit {
       username: this.userSearchForm.controls.username.value
     };
     this.loading = true;
+    this.failed = false;
     this.categorySelection = undefined;
     this.subCategorySelection = undefined;
     this.sectionSelection = undefined;
@@ -71,8 +73,14 @@ export class TriumphHomeComponent implements OnInit {
         if(data) {
           this.loading = false;
         }
+        else {
+          this.loading = false;
+          this.failed = true;
+        }
       },
       (err: any) => {
+        this.loading = false;
+        this.failed = true;
         console.log(err);
       }
     );

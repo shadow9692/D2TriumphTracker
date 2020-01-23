@@ -26,8 +26,12 @@
     <h1 id="loadingText">Loading...</h1>
   </div>
 
+  <div class="container-fluid" *ngIf="failed">
+    <h1 id="loadingText">Failed to get data.</h1>
+  </div>
+
   <!-- Category Icons and Links -->
-  <div *ngIf="triumphService.presentationNodeList && !loading">
+  <div *ngIf="triumphService.presentationNodeList && !loading && !failed">
     <h1>{{ triumphService.presentationNodeList[triumphService.rootTriumphPresentationHash].name }}</h1>
     <div class="row no-gutters">
       <div class="col-3 col-sm category-column" *ngFor="let categoryHash of triumphService.presentationNodeList[triumphService.rootTriumphPresentationHash].children.presentationNodes">
@@ -39,7 +43,7 @@
 
 <!-- Lower portion of Screen -->
 
-<div class="container-fluid bg-super-dark" *ngIf="!loading">
+<div class="container-fluid bg-super-dark" *ngIf="!loading && !failed">
 
   <div class="row">
 

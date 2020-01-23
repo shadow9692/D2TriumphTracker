@@ -224,21 +224,30 @@ export class TriumphService {
     let userTriumph: UserTriumph = profileTriumphs[recordHash];
     triumph.state = new stateMask(userTriumph.state);
 
-    userTriumph.objectives.forEach(userObjective => {
-      //#region create Promise
-      let objectivePromise = this.mapObjective(userObjective);
+    // The shadowkeep system has introduced a change in the API.
+    // Triumphs that can be partially completed multiple times now exist.
+    // Due to this, objectives may be empty, and the goals are now located in IntervalInfo
+    if(this.manifestService.manifest.DestinyRecordDefinition[recordHash].objectiveHashes.length > 0) {
+      console.log(`no error:`, userTriumph);
+      userTriumph.objectives.forEach(userObjective => {
+        //#region create Promise
+        let objectivePromise = this.mapObjective(userObjective);
 
-      objectivePromise.then(
-        (obj: Objective) => {
-          triumph.objectives.push(obj);
-        },
-        (err: Error) => {
-          console.log('we\'ve hit an error executing the promise!');
-          throw(err);
-        }
-      );
+        objectivePromise.then(
+          (obj: Objective) => {
+            triumph.objectives.push(obj);
+          },
+          (err: Error) => {
+            console.log('we\'ve hit an error executing the promise!');
+            throw(err);
+          }
+        );
 
-    });
+      });
+    }
+    else {
+      console.log(`error on ${recordHash}: user triumph data ->`, userTriumph);
+    }
   }
 
   /*
@@ -255,23 +264,33 @@ export class TriumphService {
     for(let character in characterTriumphs){
       charArray.push(characterTriumphs[character].records[recordHash]);
     }
+
     //console.log(charArray);
+    // This temporarily grabs data only from the 1st character slot.
     let userTriumph = charArray[0];
 
-    userTriumph.objectives.forEach(userObjective => {
-      //#region create Promise
-      let objectivePromise = this.mapObjective(userObjective);
+    // The shadowkeep system has introduced a change in the API.
+    // Triumphs that can be partially completed multiple times now exist.
+    // Due to this, objectives may be empty, and the goals are now located in IntervalInfo
+    if(this.manifestService.manifest.DestinyRecordDefinition[recordHash].objectiveHashes.length > 0) {
+      userTriumph.objectives.forEach(userObjective => {
+        //#region create Promise
+        let objectivePromise = this.mapObjective(userObjective);
 
-      objectivePromise.then(
-        (obj: Objective) => {
-          triumph.objectives.push(obj);
-        },
-        (err: Error) => {
-          console.log('we\'ve hit an error executing the promise!');
-          throw(err);
-        }
-      );
-    });
+        objectivePromise.then(
+          (obj: Objective) => {
+            triumph.objectives.push(obj);
+          },
+          (err: Error) => {
+            console.log('we\'ve hit an error executing the promise!');
+            throw(err);
+          }
+        );
+      });
+    }
+    else {
+      console.log(`error on ${recordHash}: user triumph data ->`, userTriumph);
+    }
   }
 
   /*
